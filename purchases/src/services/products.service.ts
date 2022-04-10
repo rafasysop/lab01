@@ -14,6 +14,12 @@ export class ProductsService {
     return this.prima.product.findMany();
   }
 
+  getProductById(id: string) {
+    return this.prima.product.findUnique({
+      where: { id },
+    });
+  }
+
   async createProduct({ title }: CreateProductParams) {
     const slug = slugify(title, { lower: true });
     const productWithSameSlug = await this.prima.product.findUnique({

@@ -1,4 +1,4 @@
-import { getSession, useUser } from "@auth0/nextjs-auth0";
+import { getAccessToken, getSession, useUser } from "@auth0/nextjs-auth0";
 import { GetServerSideProps } from "next";
 import { useEffect } from "react";
 
@@ -12,7 +12,8 @@ export default function Home() {
 
 export const getServerSideProps: GetServerSideProps = async ({req, res}) => {
   const session = getSession(req, res);
-  console.log(session);
+  const token = getAccessToken(req, res)
+  console.log(token);
 
   if (!session) {
     return {
