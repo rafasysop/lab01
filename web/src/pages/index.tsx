@@ -1,19 +1,12 @@
-import { getAccessToken, getSession, useUser } from "@auth0/nextjs-auth0";
-import { GetServerSideProps } from "next";
-import { useEffect } from "react";
+import { getSession } from "@auth0/nextjs-auth0"
+import { GetServerSideProps } from "next"
 
 export default function Home() {
-  const { user } = useUser()
-
-  useEffect(() => user && console.log(user), [user])
-
-  return null
+  return null;
 }
 
-export const getServerSideProps: GetServerSideProps = async ({req, res}) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const session = getSession(req, res);
-  const token = getAccessToken(req, res)
-  console.log(token);
 
   if (!session) {
     return {
@@ -22,13 +15,12 @@ export const getServerSideProps: GetServerSideProps = async ({req, res}) => {
         permanent: false,
       }
     }
-  } 
-
-  return {
-    redirect: {
-      destination: '/app',
-      permanent: false,
+  } else {
+    return {
+      redirect: {
+        destination: '/app',
+        permanent: false,
+      }
     }
   }
-
 }

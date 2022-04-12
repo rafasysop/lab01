@@ -1,11 +1,11 @@
 import { UnauthorizedException, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { AuthUser, CurrentUser } from 'src/http/auth/currentUser';
-import { CoursesService } from 'src/services/courses.services';
+import { CoursesService } from '../../../services/courses.service';
 import { EnrollmentsService } from '../../../services/enrollments.service';
 import { StudentsService } from '../../../services/students.service';
 import { AuthorizationGuard } from '../../auth/authorization.guard';
-import { CreateCourseInput } from '../inputs/createCourseInput';
+import { AuthUser, CurrentUser } from '../../auth/current-user';
+import { CreateCourseInput } from '../inputs/create-course-input';
 import { Course } from '../models/course';
 
 @Resolver(() => Course)

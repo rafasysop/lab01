@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/database/prisma/prisma.service';
-import { KafkaService } from 'src/messaging/kafka.service';
+
+import { PrismaService } from '../database/prisma/prisma.service';
+import { KafkaService } from '../messaging/kafka.service';
 
 interface CreatePurchaseParams {
   customerId: string;
@@ -9,10 +10,10 @@ interface CreatePurchaseParams {
 
 @Injectable()
 export class PurchasesService {
-  constructor(private prima: PrismaService, private kafka: KafkaService) {}
+  constructor(private prisma: PrismaService, private kafka: KafkaService) {}
 
   listAllPurchases() {
-    return this.prima.purchase.findMany({
+    return this.prisma.purchase.findMany({
       orderBy: {
         createdAt: 'desc',
       },
@@ -20,7 +21,7 @@ export class PurchasesService {
   }
 
   listAllFromCustomer(customerId: string) {
-    return this.prima.purchase.findMany({
+    return this.prisma.purchase.findMany({
       where: {
         customerId,
       },
@@ -31,27 +32,31 @@ export class PurchasesService {
   }
 
   async createPurchase({ customerId, productId }: CreatePurchaseParams) {
-    const product = await this.prima.product.findUnique({
-      where: { id: productId },
+    const product = await this.prisma.product.findUnique({
+      where: {
+        id: productId,
+      },
     });
 
     if (!product) {
-      throw new Error('Product not found');
+      throw new Error('Product not found.');
     }
 
-    const purchase = await this.prima.purchase.create({
+    const purchase = await this.prisma.purchase.create({
       data: {
         customerId,
         productId,
       },
     });
 
-    const { authUserId } = await this.prima.customer.findUnique({
+    const customer = await this.prisma.customer.findUnique({
       where: { id: customerId },
     });
 
     this.kafka.emit('purchases.new-purchase', {
-      authUserId,
+      customer: {
+        authUserId: customer.authUserId,
+      },
       product: {
         id: product.id,
         title: product.title,

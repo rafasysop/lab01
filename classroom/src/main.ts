@@ -14,6 +14,7 @@ async function bootstrap() {
       },
     },
   });
+
   app.startAllMicroservices().then(() => {
     console.log('[Classroom] Microservice running!');
   });
@@ -22,4 +23,5 @@ async function bootstrap() {
     console.log('[Classroom] HTTP server running!');
   });
 }
+
 bootstrap();
